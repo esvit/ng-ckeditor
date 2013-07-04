@@ -1,0 +1,13 @@
+{
+  "name": "ng-ckeditor",
+  "version": "0.1.0",
+  "main": "ng-ckeditor.js",
+  "ignore": [
+    "examples",
+    "src"
+  ],
+  "dependencies": {
+    "angular-unstable": "latest",
+    "ckeditor": "latest"
+  }
+}
