@@ -19,15 +19,20 @@
     <h1>Simple editor</h1>
 
     <div ng-controller="DemoCtrl">
-        <textarea ckeditor ng-model="test"></textarea>
+        <textarea ckeditor="editorOptions" ng-model="test"></textarea>
 
         {{test}}
-        <button ng-click="test = '131231'">asd</button>
+        <button ng-click="setOptions()">asd</button>
 
         <script>
         var app = angular.module('main', ['ngCkeditor']).
         controller('DemoCtrl', function($scope) {
-            
+            $scope.editorOptions = {
+               // uiColor: '#000000'
+            };
+            $scope.setOptions = function() {
+                $scope.test = 'asdasd';
+            }
         })
         </script>
     </div>

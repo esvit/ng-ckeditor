@@ -5,6 +5,7 @@ angular
     return {
         restrict: 'A',
         require: 'ngModel',
+        scope: false,
         link: function(scope, element, attrs, ngModel) {
             var expression = attrs.ngModel;
             var el = $(element);
@@ -13,8 +14,8 @@ angular
                 return;
             }
 
-            var instance = CKEDITOR.replace(el.get(0),
-            {
+            var options = {
+                toolbar: 'full',
                 toolbar_full:
                     [
                         { name: 'document', items : [] },
@@ -35,10 +36,150 @@ angular
                 uiColor: '#FAFAFA',
                 height: '400px',
                 width: '100%',
-                //extraPlugins: "bazalt-cms"
+                extraPlugins: "backup,onchange"
+            };
+            options = angular.extend(options, scope[attrs.ckeditor]);
+            var instance = CKEDITOR.replace(el.get(0), options);
+
+            element.bind('$destroy', function() {
+                instance.destroy(false);
             });
-            
-            var editor = instance;
+            instance.on('instanceReady', function() {
+                instance.setData(ngModel.$viewValue);
+            });
+            instance.on('pasteState', function() {
+                ngModel.$setViewValue(instance.getData());
+            });
+            instance.on('change', function() {
+                ngModel.$setViewValue(instance.getData());
+                if (!scope.$$phase) {
+                    scope.$apply();
+                }
+            });
+
+            ngModel.$render = function(value) {
+                instance.setData(ngModel.$viewValue);
+            };
+
+            scope.$watch(expression, function (val) {
+                if (!instance) return;
+                if (scope[expression] == instance.getData()) return;
+                instance.setData(ngModel.$viewValue);
+            });
+            scope.$watch(function() {
+                if (!element) {
+                    return null;
+                }
+                return instance.getData();
+            }, function (val) {
+                ngModel.$setViewValue(instance.getData());
+            });
+            instance.on('blur', function(e) {
+                if (!scope.$$phase) {
+                    scope.$apply();
+                }
+            });
+        }
+    };
+});
+CKEDITOR.plugins.add('backup',{
+    init:function(editor){
+        editor.on( 'instanceReady', function(e) { 
+            var div = document.createElement('div'),
+                select = 0,
+                style =  'display:inline-block; margin-left:10px;position:relative;margin-top:5px;overflow:hidden;float:right;',
+                bname =  'backup_'+editor.name, init = true, oldtext = '';
+            div.setAttribute('style',style);
+            if( localStorage.getItem( bname) == undefined )
+                localStorage.setItem( bname,'{}'); // создаем наше хранилище
+            var format = function(_time){
+                var n = new Date(parseInt(_time));
+                var frm = function(dd){
+                    if ( dd < 10 ) dd = '0' + dd;
+                    return dd;
+                };
+                return n.getHours()+'.'+frm(n.getMinutes())+'.'+frm(n.getSeconds());
+            };
+            editor.backup = function(del){
+                var chages = false,now = new Date().getTime(),bu = {};
+                if(del!='del'){
+                    var text = editor.getSnapshot();
+                    if( text!='' ){
+                        if( localStorage.getItem( bname) && oldtext && text!=oldtext ){
+                            bu = JSON.parse(localStorage.getItem( bname));
+                            bu[now] = text;
+                            localStorage.setItem( bname,JSON.stringify(bu));
+                            chages = true;
+                        }
+                    }
+                }else{
+                    if( confirm('Вы уверены, что хотите удалить весь бекап?') ){
+                        localStorage.setItem( bname,'{}');
+                        chages = true;
+                    }
+                }
+                if( chages || init){
+                    if(init&&localStorage.getItem( bname)){
+                        bu = JSON.parse(localStorage.getItem( bname));
+                    }
+                    var opt = '<option>---</option>';
+                    for(var r in bu)
+                        opt+='<option value="'+r+'">'+format(r)+'</option>';
+                    select.setHtml(opt);
+                    init = false;
+                }
+                oldtext = text;
+            },
+            editor.restore = function(){
+                var text = editor.getSnapshot();
+                var val = select.getValue();
+                var bu = JSON.parse( localStorage.getItem( bname) );
+                if( bu[val]!=undefined && (text==''||confirm('Вы уверены, что хотите заменить имеющийся текст, текстом из бекапа?')) ){
+                    editor.loadSnapshot( bu[val] );
+                }
+            };
+            var mixer = 0;
+            editor.on( 'change',function(){
+                clearTimeout(mixer);
+                mixer = setTimeout(function(){
+                    editor.backup();
+                },3000);
+            });
+            div.innerHTML = '<select style="margin-top:-5px;" id="backuper_'+editor.name+'"></select>&nbsp;<input type="image" value="del" onclick="CKEDITOR.instances[\''+editor.name+'\'].backup(\'del\'); return false;" src="'+CKEDITOR.basePath+'plugins/backup/clear.png"/>';
+            div.onchange = editor.restore;
+            CKEDITOR.document.getById( editor.ui.spaceId?editor.ui.spaceId("bottom"): 'cke_bottom_'+editor.name ).append(new CKEDITOR.dom.node(div));
+            select = CKEDITOR.document.getById( 'backuper_'+editor.name );
+            editor.backup();
+        });
+    }
+});
+/*
+ * @file change event plugin for CKEditor
+ * Copyright (C) 2011 Alfonso Martнnez de Lizarrondo
+ *
+ * == BEGIN LICENSE ==
+ *
+ * Licensed under the terms of any of the following licenses at your
+ * choice:
+ *
+ *  - GNU General Public License Version 2 or later (the "GPL")
+ *    http://www.gnu.org/licenses/gpl.html
+ *
+ *  - GNU Lesser General Public License Version 2.1 or later (the "LGPL")
+ *    http://www.gnu.org/licenses/lgpl.html
+ *
+ *  - Mozilla Public License Version 1.1 or later (the "MPL")
+ *    http://www.mozilla.org/MPL/MPL-1.1.html
+ *
+ * == END LICENSE ==
+ *
+ */
+
+ // Keeps track of changes to the content and fires a "change" event
+CKEDITOR.plugins.add( 'onchange',
+{
+	init : function( editor )
+	{
 //		// Test:
 //		editor.on( 'change', function(e) { console.log( e ) });
 
@@ -48,6 +189,21 @@ angular
 // http://dvcs.w3.org/hg/domcore/raw-file/tip/Overview.html#mutation-observers
 // http://hacks.mozilla.org/2012/05/dom-mutationobserver-reacting-to-dom-changes-without-killing-browser-performance/
 
+		// Avoid firing the event too often
+		function somethingChanged()
+		{
+			// don't fire events if the editor is readOnly as they are false detections
+			if (editor.readOnly)
+				return;
+
+			if (timer)
+				return;
+
+			timer = setTimeout( function() {
+				timer = 0;
+				editor.fire( 'change' );
+			}, editor.config.minimumChangeMilliseconds || 100);
+		}
 		// Kill the timer on editor destroy
 		editor.on( 'destroy', function() { if ( timer ) clearTimeout( timer ); timer = null; });
 
@@ -146,61 +302,7 @@ angular
 				}
 			});
 
-		// Avoid firing the event too often
-		function somethingChanged()
-		{
-			// don't fire events if the editor is readOnly as they are false detections
-			if (editor.readOnly)
-				return;
-
-			if (timer)
-				return;
-
-			timer = setTimeout( function() {
-				timer = 0;
-                ngModel.$setViewValue(instance.getData());
-                if (!scope.$$phase) {
-                    scope.$apply();
-                }
-			}, editor.config.minimumChangeMilliseconds || 100);
-		}
-
-            element.bind('$destroy', function() {
-                instance.destroy(false);
-            });
-            instance.on('instanceReady', function() {
-                instance.setData(ngModel.$viewValue);
-            });
-            instance.on('pasteState', function() {
-                //scope.$apply(function() {
-                ngModel.$setViewValue(instance.getData());
-                //});
-            });
-
-            ngModel.$render = function(value) {
-                instance.setData(ngModel.$viewValue);
-            };
-
-            scope.$watch(expression, function (val) {
-                if (!instance) return;
-                if (scope[expression] == instance.getData()) return;
-                instance.setData(ngModel.$viewValue);
-            });
-            scope.$watch(function() {
-                if (!element) {
-                    return null;
-                }
-                return instance.getData();
-            }, function (val) {
-                ngModel.$setViewValue(instance.getData());
-            });
-            instance.on('blur', function(e) {
-                if (!scope.$$phase) {
-                    scope.$apply();
-                }
-            });
-        }
-    };
-});
+	} //Init
+} );
 angular.module('ngCkeditor').run(['$templateCache', function ($templateCache) {
 }]);
