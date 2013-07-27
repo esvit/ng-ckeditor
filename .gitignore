@@ -1,3 +1,6 @@
 .temp
 node_modules
 components
+.idea
+bower_components
+vendor
