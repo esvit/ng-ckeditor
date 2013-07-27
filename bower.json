@@ -8,6 +8,6 @@
   ],
   "dependencies": {
     "angular-unstable": "latest",
-    "eo-ckeditor": "*"
+    "ckeditor": "4.2/full"
   }
 }

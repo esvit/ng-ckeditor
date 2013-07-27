@@ -14,13 +14,19 @@ angular
                 return;
             }
 
+            var basePath = CKEDITOR.basePath;
+            basePath = basePath.substr(0, basePath.indexOf("ckeditor/"));
+            (function() {
+                CKEDITOR.plugins.addExternal('aspell',basePath+'../src/plugins/aspell/', 'plugin.js');
+            })();
+
             var options = {
                 toolbar: 'full',
                 toolbar_full:
                     [
                         { name: 'document', items : [] },
                         { name: 'clipboard', items : [ 'Cut','Copy','Paste','PasteText','PasteFromWord','-','Undo','Redo' ] },
-                        { name: 'editing', items : [ 'Find','Replace','-','SpellChecker', 'Scayt' ] },
+                        { name: 'editing', items : [ 'Find','Replace','-','SpellCheck' ] },
                         { name: 'forms', items : [] },
                         { name: 'basicstyles', items : [ 'Bold','Italic','Underline','Strike','Subscript','Superscript' ] },
                         { name: 'paragraph', items : [
@@ -33,11 +39,13 @@ angular
                         { name: 'tools', items : [ 'Maximize', 'Youtube' ] }
                     ]
                 ,
+                disableNativeSpellChecker: false,
                 uiColor: '#FAFAFA',
                 height: '400px',
                 width: '100%',
-                extraPlugins: "youtube" //"backup,onchange"
+                extraPlugins: "youtube,aspell" //"backup,onchange"
             };
+            CKEDITOR.config.spellerPagesServerScript = '/examples/spellcheck/handler.php';
             options = angular.extend(options, scope[attrs.ckeditor]);
             var instance = CKEDITOR.replace(el.get(0), options);
 
