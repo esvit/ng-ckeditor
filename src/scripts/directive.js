@@ -26,7 +26,7 @@ angular
                     [
                         { name: 'document', items : [] },
                         { name: 'clipboard', items : [ 'Cut','Copy','Paste','PasteText','PasteFromWord','-','Undo','Redo' ] },
-                        { name: 'editing', items : [ 'Find','Replace','-','SpellCheck' ] },
+                        { name: 'editing', items : [ 'Find','Replace','-'/*,'SpellCheck' */] },
                         { name: 'forms', items : [] },
                         { name: 'basicstyles', items : [ 'Bold','Italic','Underline','Strike','Subscript','Superscript' ] },
                         { name: 'paragraph', items : [
