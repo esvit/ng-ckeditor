@@ -25,18 +25,18 @@ angular
                         { name: 'basicstyles', items : [ 'Bold','Italic','Underline','Strike','Subscript','Superscript' ] },
                         { name: 'paragraph', items : [
                             'NumberedList','BulletedList','-','JustifyLeft','JustifyCenter','JustifyRight','JustifyBlock' ] },
-                        { name: 'links', items : [] },
+                        { name: 'links', items : ['Source'] },
                         { name: 'insert', items : [ 'SpecialChar' ] },
                         '/',
                         { name: 'styles', items : [ 'Styles','Format','Font','FontSize' ] },
                         { name: 'colors', items : [] },
-                        { name: 'tools', items : [ 'Maximize', 'bazalt-image' ] }
+                        { name: 'tools', items : [ 'Maximize', 'Youtube' ] }
                     ]
                 ,
                 uiColor: '#FAFAFA',
                 height: '400px',
                 width: '100%',
-                extraPlugins: "backup,onchange"
+                extraPlugins: "youtube" //"backup,onchange"
             };
             options = angular.extend(options, scope[attrs.ckeditor]);
             var instance = CKEDITOR.replace(el.get(0), options);

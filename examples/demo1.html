@@ -12,7 +12,9 @@
         <script src="js/jquery-1.9.1.min.js"></script>
         <script src="../bower_components/angular-unstable/angular.min.js"></script>
         <script src="../bower_components/eo-ckeditor/ckeditor.js"></script>
-        <script src="../ng-ckeditor.src.js"></script>
+        <script src="../src/plugins/youtube/plugin.js"></script>
+        <script src="../src/plugins/youtube/lang/ru.js"></script>
+        <script src="../src/scripts/directive.js"></script>
         <link rel="stylesheet" href="../ng-ckeditor.css">
     </head>
 <body ng-app="main">
@@ -28,6 +30,7 @@
         var app = angular.module('main', ['ngCkeditor']).
         controller('DemoCtrl', function($scope, $http) {
             $scope.editorOptions = {
+                language: 'ru'
                // uiColor: '#000000'
             };
             $scope.save = function() {
