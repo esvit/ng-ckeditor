@@ -23,22 +23,21 @@ angular
             var options = {
                 toolbar: 'full',
                 toolbar_full:
-                    [
-                        { name: 'document', items : [] },
-                        { name: 'clipboard', items : [ 'Cut','Copy','Paste','PasteText','PasteFromWord','-','Undo','Redo' ] },
-                        { name: 'editing', items : [ 'Find','Replace','-'/*,'SpellCheck' */] },
-                        { name: 'forms', items : [] },
-                        { name: 'basicstyles', items : [ 'Bold','Italic','Underline','Strike','Subscript','Superscript' ] },
-                        { name: 'paragraph', items : [
-                            'NumberedList','BulletedList','-','JustifyLeft','JustifyCenter','JustifyRight','JustifyBlock' ] },
-                        { name: 'links', items : ['Source'] },
-                        { name: 'insert', items : [ 'SpecialChar' ] },
-                        '/',
-                        { name: 'styles', items : [ 'Styles','Format','Font','FontSize' ] },
-                        { name: 'colors', items : [] },
-                        { name: 'tools', items : [ 'Maximize', 'Youtube' ] }
-                    ]
-                ,
+                [
+                    { name: 'document', items : [] },
+                    { name: 'clipboard', items : [ 'Cut','Copy','Paste','PasteText','PasteFromWord','-','Undo','Redo' ] },
+                    { name: 'editing', items : [ 'Find','Replace','-'/*,'SpellCheck' */] },
+                    { name: 'forms', items : [] },
+                    { name: 'basicstyles', items : [ 'Bold','Italic','Underline','Strike','Subscript','Superscript' ] },
+                    { name: 'paragraph', items : [
+                        'NumberedList','BulletedList','-','JustifyLeft','JustifyCenter','JustifyRight','JustifyBlock' ] },
+                    { name: 'links', items : ['Source'] },
+                    { name: 'insert', items : [ 'SpecialChar' ] },
+                    '/',
+                    { name: 'styles', items : [ 'Styles','Format','Font','FontSize' ] },
+                    { name: 'colors', items : [] },
+                    { name: 'tools', items : [ 'Maximize', 'Youtube' ] }
+                ],
                 disableNativeSpellChecker: false,
                 uiColor: '#FAFAFA',
                 height: '400px',
