@@ -8,6 +8,6 @@
   ],
   "dependencies": {
     "angular-unstable": "latest",
-    "ckeditor": "https://github.com/ckeditor/ckeditor-dev.git"
+    "ckeditor": "https://github.com/eymengunay/ckeditor.git"
   }
 }

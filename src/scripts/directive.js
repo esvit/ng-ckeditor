@@ -24,19 +24,18 @@ angular
                 toolbar: 'full',
                 toolbar_full:
                 [
-                    { name: 'document', items : [] },
-                    { name: 'clipboard', items : [ 'Cut','Copy','Paste','PasteText','PasteFromWord','-','Undo','Redo' ] },
-                    { name: 'editing', items : [ 'Find','Replace','-'/*,'SpellCheck' */] },
-                    { name: 'forms', items : [] },
-                    { name: 'basicstyles', items : [ 'Bold','Italic','Underline','Strike','Subscript','Superscript' ] },
-                    { name: 'paragraph', items : [
-                        'NumberedList','BulletedList','-','JustifyLeft','JustifyCenter','JustifyRight','JustifyBlock' ] },
-                    { name: 'links', items : ['Source'] },
-                    { name: 'insert', items : [ 'SpecialChar' ] },
+                    { name: 'basicstyles', items : [ 'Bold','Italic','Strike','Underline' ] },
+                    { name: 'paragraph', items : [ 'BulletedList','NumberedList','Blockquote' ] },
+                    { name: 'editing', items : ['JustifyLeft','JustifyCenter','JustifyRight','JustifyBlock' ] },
+                    { name: 'links', items : [ 'Link','Unlink','Anchor' ] },
+                    { name: 'tools', items : [ 'SpellChecker','Maximize' ] },
                     '/',
-                    { name: 'styles', items : [ 'Styles','Format','Font','FontSize' ] },
-                    { name: 'colors', items : [] },
-                    { name: 'tools', items : [ 'Maximize', 'Youtube' ] }
+                    { name: 'styles', items : [ 'Format','FontSize','TextColor','PasteText','PasteFromWord','RemoveFormat' ] },
+                    { name: 'insert', items : [ 'Image','Table','SpecialChar' ] },
+                    { name: 'forms', items : [ 'Outdent','Indent' ] },
+                    { name: 'clipboard', items : [ 'Undo','Redo' ] },
+                    { name: 'document', items : [ 'PageBreak','Source' ] }
+                    /*{ name: 'colors', items : ['bazalt-image'] },*/
                 ],
                 disableNativeSpellChecker: false,
                 uiColor: '#FAFAFA',

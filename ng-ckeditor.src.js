@@ -14,30 +14,36 @@ angular
                 return;
             }
 
+            var basePath = CKEDITOR.basePath;
+            basePath = basePath.substr(0, basePath.indexOf("ckeditor/"));
+            (function() {
+                CKEDITOR.plugins.addExternal('aspell',basePath+'../src/plugins/aspell/', 'plugin.js');
+            })();
+
             var options = {
                 toolbar: 'full',
                 toolbar_full:
-                    [
-                        { name: 'document', items : [] },
-                        { name: 'clipboard', items : [ 'Cut','Copy','Paste','PasteText','PasteFromWord','-','Undo','Redo' ] },
-                        { name: 'editing', items : [ 'Find','Replace','-','SpellChecker', 'Scayt' ] },
-                        { name: 'forms', items : [] },
-                        { name: 'basicstyles', items : [ 'Bold','Italic','Underline','Strike','Subscript','Superscript' ] },
-                        { name: 'paragraph', items : [
-                            'NumberedList','BulletedList','-','JustifyLeft','JustifyCenter','JustifyRight','JustifyBlock' ] },
-                        { name: 'links', items : [] },
-                        { name: 'insert', items : [ 'SpecialChar' ] },
-                        '/',
-                        { name: 'styles', items : [ 'Styles','Format','Font','FontSize' ] },
-                        { name: 'colors', items : [] },
-                        { name: 'tools', items : [ 'Maximize', 'bazalt-image' ] }
-                    ]
-                ,
+                [
+                    { name: 'basicstyles', items : [ 'Bold','Italic','Strike','Underline' ] },
+                    { name: 'paragraph', items : [ 'BulletedList','NumberedList','Blockquote' ] },
+                    { name: 'editing', items : ['JustifyLeft','JustifyCenter','JustifyRight','JustifyBlock' ] },
+                    { name: 'links', items : [ 'Link','Unlink','Anchor' ] },
+                    { name: 'tools', items : [ 'SpellChecker','Maximize' ] },
+                    '/',
+                    { name: 'styles', items : [ 'Format','FontSize','TextColor','PasteText','PasteFromWord','RemoveFormat' ] },
+                    { name: 'insert', items : [ 'Image','Table','SpecialChar' ] },
+                    { name: 'forms', items : [ 'Outdent','Indent' ] },
+                    { name: 'clipboard', items : [ 'Undo','Redo' ] },
+                    { name: 'document', items : [ 'PageBreak','Source' ] }
+                    /*{ name: 'colors', items : ['bazalt-image'] },*/
+                ],
+                disableNativeSpellChecker: false,
                 uiColor: '#FAFAFA',
                 height: '400px',
                 width: '100%',
-                extraPlugins: "backup,onchange"
+                extraPlugins: "youtube,aspell" //"backup,onchange"
             };
+            CKEDITOR.config.spellerPagesServerScript = '/examples/spellcheck/handler.php';
             options = angular.extend(options, scope[attrs.ckeditor]);
             var instance = CKEDITOR.replace(el.get(0), options);
 
