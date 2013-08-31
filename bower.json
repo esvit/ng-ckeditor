@@ -6,7 +6,7 @@
     "examples"
   ],
   "dependencies": {
-    "angular-unstable": "latest",
-    "ckeditor": "https://github.com/eymengunay/ckeditor.git"
+    "ckeditor": "https://github.com/eymengunay/ckeditor.git",
+    "angular": "1.2.0-rc.1"
   }
 }
