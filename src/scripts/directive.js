@@ -72,10 +72,10 @@ angular
                     if (!instance) {
                         return;
                     }
-                    if (scope[expression] == instance.getData()) {
+                    if (ngModel.$viewValue == instance.getData()) {
                         return;
                     }
-                    //instance.setData(ngModel.$viewValue);
+                    instance.setData(ngModel.$viewValue);
                 });
                 scope.$watch(function () {
                     if (!element) {
