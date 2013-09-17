@@ -82,7 +82,10 @@ angular
                         return null;
                     }
                     return instance.getData();
-                }, function () {
+                }, function (val, oldVal) {
+                    if (val === '' && angular.isDefined(oldVal) && oldVal !== '') { // when ckeditor loaded first
+                        return;
+                    }
                     ngModel.$setViewValue(instance.getData());
                 });
                 instance.on('blur', function () {
