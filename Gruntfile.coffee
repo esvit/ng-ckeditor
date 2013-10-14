@@ -8,7 +8,6 @@ module.exports = (grunt) ->
             working:
                 src: [
                     'ng-ckeditor.*'
-                    './.temp/views'
                     './.temp/'
                 ]
         copy:
@@ -29,7 +28,7 @@ module.exports = (grunt) ->
         concat:
             # concat js files before minification
             js:
-                src: ['src/scripts/directive.js', './src/plugins/*.js', './.temp/scripts/views.js']
+                src: ['src/scripts/*.js', './src/plugins/*.js']
                 dest: 'ng-ckeditor.src.js'
 
         less:
@@ -42,14 +41,6 @@ module.exports = (grunt) ->
                 files:
                     'ng-ckeditor.css': 'ng-ckeditor.css'
 
-        ngTemplateCache:
-            views:
-                files:
-                    './.temp/scripts/views.js': './src/views/**/*.html'
-                options:
-                    trim: './.temp/'
-                    module: 'ngCkeditor'
-
     # Register grunt tasks supplied by grunt-contrib-*.
     # Referenced in package.json.
     # https://github.com/gruntjs/grunt-contrib
@@ -60,15 +51,8 @@ module.exports = (grunt) ->
     grunt.loadNpmTasks 'grunt-contrib-uglify'
     grunt.loadNpmTasks 'grunt-contrib-concat'
 
-
-    # Register grunt tasks supplied by grunt-hustler.
-    # Referenced in package.json.
-    # https://github.com/CaryLandholt/grunt-hustler
-    grunt.loadNpmTasks 'grunt-hustler'
-
     grunt.registerTask 'dev', [
         'clean'
-        'ngTemplateCache'
         'concat'
         'less'
         'copy'

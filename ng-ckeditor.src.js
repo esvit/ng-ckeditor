@@ -1,6 +1,15 @@
-angular
-    .module('ngCkeditor', [])
-    .directive('ckeditor', function () {
+(function(angular, factory) {
+    if (typeof define === 'function' && define.amd) {
+        define('ng-ckeditor', ['jquery', 'angular', 'ckeditor'], function($, angular) {
+            return factory(angular);
+        });
+    } else {
+        return factory(angular);
+    }
+}(angular || null, function(angular) {
+var app = angular.module('ngCkeditor', []);
+
+app.directive('ckeditor', function () {
         'use strict';
 
         return {
@@ -96,6 +105,8 @@ angular
             }
         };
     });
+    return app;
+}));
 CKEDITOR.plugins.add('backup',{
     init:function(editor){
         editor.on( 'instanceReady', function(e) { 
@@ -318,5 +329,3 @@ CKEDITOR.plugins.add( 'onchange',
 
 	} //Init
 } );
-angular.module('ngCkeditor').run(['$templateCache', function ($templateCache) {
-}]);

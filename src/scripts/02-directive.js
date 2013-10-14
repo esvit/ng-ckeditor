@@ -1,6 +1,6 @@
-angular
-    .module('ngCkeditor', [])
-    .directive('ckeditor', function () {
+var app = angular.module('ngCkeditor', []);
+
+app.directive('ckeditor', function () {
         'use strict';
 
         return {
