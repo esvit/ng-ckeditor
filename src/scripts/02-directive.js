@@ -15,13 +15,6 @@ app.directive('ckeditor', function () {
                     return;
                 }
 
-                /*var basePath = CKEDITOR.basePath;
-                 basePath = basePath.substr(0, basePath.indexOf("ckeditor/"));
-                 (function() {
-                 CKEDITOR.plugins.addExternal('aspell',basePath+'../src/plugins/aspell/', 'plugin.js');
-                 CKEDITOR.plugins.addExternal('aspell',basePath+'../src/plugins/youtube/', 'plugin.js');
-                 })();
-                 */
                 var options = {
                     toolbar: 'full',
                     toolbar_full: [
@@ -41,10 +34,9 @@ app.directive('ckeditor', function () {
                     disableNativeSpellChecker: false,
                     uiColor: '#FAFAFA',
                     height: '400px',
-                    width: '100%'//,
-                    //extraPlugins: "youtube,aspell" //"backup,onchange"
+                    width: '100%'
                 };
-                CKEDITOR.config.spellerPagesServerScript = '/examples/spellcheck/handler.php';
+                //CKEDITOR.config.spellerPagesServerScript = '/examples/spellcheck/handler.php';
                 options = angular.extend(options, scope[attrs.ckeditor]);
                 var instance = CKEDITOR.replace(el.get(0), options);
 
@@ -58,6 +50,14 @@ app.directive('ckeditor', function () {
                     ngModel.$setViewValue(instance.getData());
                 });
                 instance.on('change', function () {
+                    ngModel.$setViewValue(instance.getData());
+                    if (!scope.$$phase) {
+                        scope.$apply();
+                    }
+                });
+
+                // for source view
+                instance.on('key', function() {
                     ngModel.$setViewValue(instance.getData());
                     if (!scope.$$phase) {
                         scope.$apply();
