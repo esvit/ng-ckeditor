@@ -13,13 +13,17 @@ app.directive('ckeditor', ['$timeout', function ($timeout) {
     'use strict';
 
     return {
-        restrict: 'A',
+        restrict: 'AC',
         require: 'ngModel',
         scope: false,
         link: function (scope, element, attrs, ngModel) {
-            var expression = attrs.ngModel;
-            var el = $(element);
+            var isTextarea = element.is('textarea');
 
+            if (!isTextarea) {
+                element.attr('contenteditable', true);
+            }
+
+            CKEDITOR.disableAutoInline = true;
             if (angular.isUndefined(CKEDITOR) || angular.isUndefined(CKEDITOR.instances)) {
                 return;
             }
@@ -38,22 +42,21 @@ app.directive('ckeditor', ['$timeout', function ($timeout) {
                     { name: 'forms', items: [ 'Outdent', 'Indent' ] },
                     { name: 'clipboard', items: [ 'Undo', 'Redo' ] },
                     { name: 'document', items: [ 'PageBreak', 'Source' ] }
-                    /*{ name: 'colors', items : ['bazalt-image'] },*/
                 ],
                 disableNativeSpellChecker: false,
                 uiColor: '#FAFAFA',
                 height: '400px',
                 width: '100%'
             };
-            //CKEDITOR.config.spellerPagesServerScript = '/examples/spellcheck/handler.php';
             options = angular.extend(options, scope[attrs.ckeditor]);
-            var instance = CKEDITOR.replace(el.get(0), options);
+
+            var instance = (isTextarea) ? CKEDITOR.replace(element[0], options) : CKEDITOR.inline(element[0], options);
 
             element.bind('$destroy', function () {
                 instance.destroy(false);
             });
             instance.on('instanceReady', function () {
-                instance.setData(ngModel.$viewValue);
+                instance.setData(ngModel.$viewValue || '<p></p>');
             });
             instance.on('pasteState', function () {
                 ngModel.$setViewValue(instance.getData());
@@ -76,25 +79,16 @@ app.directive('ckeditor', ['$timeout', function ($timeout) {
             });
 
             ngModel.$render = function () {
-                instance.setData(ngModel.$viewValue);
+                instance.setData(ngModel.$viewValue || '<p></p>');
             };
 
-            scope.$watch(expression, function () {
-                if (!instance) {
-                    return;
-                }
-                if (ngModel.$viewValue == instance.getData()) {
-                    return;
-                }
-                instance.setData(ngModel.$viewValue);
-            });
             scope.$watch(function () {
                 if (!element) {
                     return null;
                 }
                 return instance.getData();
             }, function (val, oldVal) {
-                if (val === '' && angular.isDefined(oldVal) && oldVal !== '') { // when ckeditor loaded first
+                if (val === '' && (angular.isUndefined(oldVal) || oldVal === '')) { // when ckeditor loaded first
                     return;
                 }
                 ngModel.$setViewValue(instance.getData());
