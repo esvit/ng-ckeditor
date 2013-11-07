@@ -17,7 +17,8 @@ app.directive('ckeditor', ['$timeout', function ($timeout) {
         require: 'ngModel',
         scope: false,
         link: function (scope, element, attrs, ngModel) {
-            var isTextarea = element.is('textarea');
+            var EMPTY_HTML = '<p></p>',
+                isTextarea = element.is('textarea');
 
             if (!isTextarea) {
                 element.attr('contenteditable', true);
@@ -56,7 +57,7 @@ app.directive('ckeditor', ['$timeout', function ($timeout) {
                 instance.destroy(false);
             });
             instance.on('instanceReady', function () {
-                instance.setData(ngModel.$viewValue || '<p></p>');
+                instance.setData(ngModel.$viewValue || EMPTY_HTML);
             });
             instance.on('pasteState', function () {
                 ngModel.$setViewValue(instance.getData());
@@ -79,7 +80,7 @@ app.directive('ckeditor', ['$timeout', function ($timeout) {
             });
 
             ngModel.$render = function () {
-                instance.setData(ngModel.$viewValue || '<p></p>');
+                instance.setData(ngModel.$viewValue || EMPTY_HTML);
             };
 
             scope.$watch(function () {
@@ -88,7 +89,7 @@ app.directive('ckeditor', ['$timeout', function ($timeout) {
                 }
                 return instance.getData();
             }, function (val, oldVal) {
-                if (val === '' && (angular.isUndefined(oldVal) || oldVal === '')) { // when ckeditor loaded first
+                if (val === EMPTY_HTML && (angular.isUndefined(oldVal) || oldVal === EMPTY_HTML)) { // when ckeditor loaded first
                     return;
                 }
                 ngModel.$setViewValue(instance.getData());
