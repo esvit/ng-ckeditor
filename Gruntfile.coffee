@@ -28,7 +28,7 @@ module.exports = (grunt) ->
         concat:
             # concat js files before minification
             js:
-                src: ['src/scripts/*.js', './src/plugins/*.js']
+                src: ['src/scripts/*.js']
                 dest: 'ng-ckeditor.src.js'
 
         less:
