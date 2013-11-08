@@ -19,7 +19,6 @@ app.directive('ckeditor', ['$timeout', function ($timeout) {
             if (angular.isUndefined(CKEDITOR) || angular.isUndefined(CKEDITOR.instances)) {
                 return;
             }
-
             var options = {
                 toolbar: 'full',
                 toolbar_full: [

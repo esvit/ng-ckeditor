@@ -7,7 +7,12 @@ For licensing, see LICENSE.md or http://ckeditor.com/license
 <head>
 	<title>Massive inline editing &mdash; CKEditor Sample</title>
 	<meta charset="utf-8">
-	<script src="../ckeditor.js"></script>
+    <link rel="stylesheet" href="css/bootstrap.css">
+    <script src="js/jquery-1.9.1.min.js"></script>
+    <script src="../bower_components/angular/angular.js"></script>
+    <script src="../ckeditor/ckeditor.js"></script>
+    <script src="../src/scripts/02-directive.js"></script>
+    <link rel="stylesheet" href="../ng-ckeditor.css">
 	<script>
 
 		// This code is generally not necessary, but it is here to demonstrate
@@ -190,7 +195,7 @@ For licensing, see LICENSE.md or http://ckeditor.com/license
 
 	</style>
 </head>
-<body>
+<body ng-app="main" ng-controller="DemoCtrl">
 <div>
 	<h1 class="samples"><a href="index.html">CKEditor Samples</a> &raquo; Massive inline editing</h1>
 	<div class="description">
@@ -200,21 +205,22 @@ For licensing, see LICENSE.md or http://ckeditor.com/license
 	</div>
 </div>
 <div id="container">
+    {{article}}
 	<div id="header">
 		<div id="headerLeft">
-			<h2 id="sampleTitle" contenteditable="true">
+			<h2 id="sampleTitle" ng-model="article.title" contenteditable="true">
 				CKEditor<br> Goes Inline!
 			</h2>
 			<h3 contenteditable="true">
 				Lorem ipsum dolor sit amet dolor duis blandit vestibulum faucibus a, tortor.
 			</h3>
 		</div>
-		<div id="headerRight">
-			<div contenteditable="true">
-				<p>
+		<div id="headerRight" ckeditor-html="article.body">
+			<div>
+				<p ckeditor ng-model="test1">
 					Lorem ipsum dolor sit amet enim. Etiam ullamcorper. Suspendisse a pellentesque dui, non felis. Maecenas malesuada elit lectus felis, malesuada ultricies.
 				</p>
-				<p>
+				<p ckeditor ng-model="test2">
 					Curabitur et ligula. Ut molestie a, ultricies porta urna. Vestibulum commodo volutpat a, convallis ac, laoreet enim. Phasellus fermentum in, dolor. Pellentesque facilisis. Nulla imperdiet sit amet magna. Vestibulum dapibus, mauris nec malesuada fames ac.
 				</p>
 			</div>
@@ -307,5 +313,22 @@ For licensing, see LICENSE.md or http://ckeditor.com/license
 		- Frederico Knabben. All rights reserved.
 	</p>
 </div>
+
+<script>
+    var app = angular.module('main', ['ngCkeditor']).
+            controller('DemoCtrl', function($scope, $http) {
+                $scope.editorOptions = {
+                    language: 'ru'
+                    // uiColor: '#000000'
+                };
+                $scope.save = function() {
+                    $http.post('/examples/test.php', {
+                        content: $scope.test
+                    }).success(function() {
+                                alert('Saved');
+                            });
+                }
+            })
+</script>
 </body>
 </html>
