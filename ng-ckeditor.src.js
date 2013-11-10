@@ -8,18 +8,24 @@
     }
 }(angular || null, function(angular) {
 var app = angular.module('ngCkeditor', []);
+var $defer, loaded = false;
 
-app.directive('ckeditor', ['$timeout', '$q', function ($timeout, $q) {
-    'use strict';
-    var $defer = $q.defer();
+app.run(['$q', function($q) {
+    $defer = $q.defer();
 
     if (angular.isUndefined(CKEDITOR)) {
         throw new Error('CKEDITOR not found');
     }
     CKEDITOR.disableAutoInline = true;
     CKEDITOR.on('loaded', function () {
+        loaded = true;
         $defer.resolve();
     });
+}])
+
+app.directive('ckeditor', ['$timeout', '$q', function ($timeout, $q) {
+    'use strict';
+
     return {
         restrict: 'AC',
         require: 'ngModel',
@@ -32,7 +38,7 @@ app.directive('ckeditor', ['$timeout', '$q', function ($timeout, $q) {
                 element.attr('contenteditable', true);
             }
 
-            $defer.promise.then(function () {
+            var onLoad = function () {
                 var options = {
                     toolbar: 'full',
                     toolbar_full: [
@@ -103,7 +109,13 @@ app.directive('ckeditor', ['$timeout', '$q', function ($timeout, $q) {
                         scope.$apply();
                     }
                 });
-            });
+            };
+
+            if (loaded) {
+                onLoad();
+            } else {
+                $defer.promise.then(onLoad);
+            }
         }
     };
 }]);
