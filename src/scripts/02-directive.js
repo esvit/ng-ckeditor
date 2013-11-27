@@ -1,17 +1,22 @@
 var app = angular.module('ngCkeditor', []);
 var $defer, loaded = false;
 
-app.run(['$q', function($q) {
+app.run(['$q', '$timeout', function($q, $timeout) {
     $defer = $q.defer();
 
     if (angular.isUndefined(CKEDITOR)) {
         throw new Error('CKEDITOR not found');
     }
     CKEDITOR.disableAutoInline = true;
-    CKEDITOR.on('loaded', function () {
-        loaded = true;
-        $defer.resolve();
-    });
+    function checkLoaded() {
+        if (CKEDITOR.status == 'loaded') {
+            loaded = true;
+            $defer.resolve();
+        } else {
+            checkLoaded();
+        }
+    }
+    $timeout(checkLoaded, 100);
 }])
 
 app.directive('ckeditor', ['$timeout', '$q', function ($timeout, $q) {
