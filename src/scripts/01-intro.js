@@ -1,6 +1,6 @@
 (function(angular, factory) {
     if (typeof define === 'function' && define.amd) {
-        define('ng-ckeditor', ['jquery', 'angular', 'ckeditor'], function($, angular) {
+        define(['angular', 'ckeditor'], function(angular) {
             return factory(angular);
         });
     } else {

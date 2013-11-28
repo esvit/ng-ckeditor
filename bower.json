@@ -1,12 +1,13 @@
 {
-  "name": "ng-ckeditor",
-  "version": "0.1.0",
-  "main": "ng-ckeditor.js",
-  "ignore": [
-    "examples"
-  ],
-  "dependencies": {
-    "ckeditor": "https://github.com/eymengunay/ckeditor.git",
-    "angular": "1.2.0-rc.1"
-  }
+    "name": "ng-ckeditor",
+    "version": "0.2.0",
+    "main": "ng-ckeditor.js",
+    "dependencies": {
+        "angular": "1.2.3"
+    },
+    "devDependencies": {
+        "jquery": "~2.0.3",
+        "angular-mocks": "1.2.3",
+        "jquery.simulate": "~1.2.0"
+    }
 }

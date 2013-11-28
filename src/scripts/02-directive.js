@@ -16,6 +16,7 @@ app.run(['$q', '$timeout', function($q, $timeout) {
             checkLoaded();
         }
     }
+    CKEDITOR.on('loaded', checkLoaded);
     $timeout(checkLoaded, 100);
 }])
 
@@ -28,7 +29,7 @@ app.directive('ckeditor', ['$timeout', '$q', function ($timeout, $q) {
         scope: false,
         link: function (scope, element, attrs, ngModel) {
             var EMPTY_HTML = '<p></p>',
-                isTextarea = element.is('textarea');
+                isTextarea = element[0].tagName.toLowerCase() == 'textarea';
 
             if (!isTextarea) {
                 element.attr('contenteditable', true);
@@ -57,35 +58,35 @@ app.directive('ckeditor', ['$timeout', '$q', function ($timeout, $q) {
                 };
                 options = angular.extend(options, scope[attrs.ckeditor]);
 
-                var instance = (isTextarea) ? CKEDITOR.replace(element[0], options) : CKEDITOR.inline(element[0], options);
+                var instance = (isTextarea) ? CKEDITOR.replace(element[0], options) : CKEDITOR.inline(element[0], options),
+                    configLoaderDef = $q.defer();
 
                 element.bind('$destroy', function () {
-                    instance.destroy(false);
+                    instance.destroy(
+                        false //If the instance is replacing a DOM element, this parameter indicates whether or not to update the element with the instance contents.
+                    );
                 });
-                instance.on('instanceReady', function () {
-                    instance.setData(ngModel.$viewValue || EMPTY_HTML);
-                });
-                instance.on('pasteState', function () {
-                    ngModel.$setViewValue(instance.getData());
-                });
-                instance.on('change', function () {
-                    ngModel.$setViewValue(instance.getData());
-                    if (!scope.$$phase) {
-                        scope.$apply();
-                    }
-                });
-
-                // for source view
-                instance.on('key', function () {
-                    $timeout(function () {
+                var setModelData = function() {
+                    $timeout(function () { // for key up event
                         ngModel.$setViewValue(instance.getData());
-                        if (!scope.$$phase) {
-                            scope.$apply();
-                        }
                     }, 0);
+                }, onUpdateModelData = function() {
+                    scope.$apply(function() {
+                        instance.setData(ngModel.$viewValue || EMPTY_HTML);
+                    });
+                }
+
+                instance.on('pasteState',   setModelData);
+                instance.on('change',       setModelData);
+                instance.on('blur',         setModelData);
+                instance.on('key',          setModelData); // for source view
+
+                instance.on('instanceReady', onUpdateModelData);
+                instance.on('customConfigLoaded', function() {
+                    configLoaderDef.resolve();
                 });
 
-                ngModel.$render = function () {
+                ngModel.$render = function() {
                     instance.setData(ngModel.$viewValue || EMPTY_HTML);
                 };
 
@@ -95,18 +96,16 @@ app.directive('ckeditor', ['$timeout', '$q', function ($timeout, $q) {
                     }
                     return instance.getData();
                 }, function (val, oldVal) {
-                    if (val === EMPTY_HTML && (angular.isUndefined(oldVal) || oldVal === EMPTY_HTML)) { // when ckeditor loaded first
+                    /*if (val === EMPTY_HTML && (angular.isUndefined(oldVal) || oldVal === EMPTY_HTML)) { // when ckeditor loaded first
                         return;
-                    }
-                    ngModel.$setViewValue(instance.getData());
-                });
-                instance.on('blur', function () {
-                    if (!scope.$$phase) {
-                        scope.$apply();
-                    }
+                    }*/
+                    setModelData();
                 });
             };
 
+            if (CKEDITOR.status == 'loaded') {
+                loaded = true;
+            }
             if (loaded) {
                 onLoad();
             } else {
