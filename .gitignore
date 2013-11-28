@@ -4,3 +4,4 @@ components
 .idea
 bower_components
 vendor
+out
