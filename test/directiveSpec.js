@@ -50,12 +50,13 @@ describe('ng-ckeditor', function () {
             scope.test = 'new value';
             $rootScope.$apply();
 
-            expect(instance.getData()).toBe('new value');
-            expect(scope.test).toBe('new value');
+            setTimeout(function() {
+                expect(instance.getData()).toBe('<p>new value</p>\n');
+                expect(scope.test).toBe('new value');
+            }, 10);
 
             instance.on('instanceReady', function() {
                 $timeout.flush();
-
                 expect(content.html()).toBe('<p>new value</p>');
                 expect(instance.getData()).toBe('<p>new value</p>\n');
                 expect(scope.test).toBe('<p>new value</p>\n');

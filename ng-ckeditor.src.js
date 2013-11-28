@@ -38,7 +38,9 @@ app.directive('ckeditor', ['$timeout', '$q', function ($timeout, $q) {
         scope: false,
         link: function (scope, element, attrs, ngModel) {
             var EMPTY_HTML = '<p></p>',
-                isTextarea = element[0].tagName.toLowerCase() == 'textarea';
+                isTextarea = element[0].tagName.toLowerCase() == 'textarea',
+                data = [],
+                isReady = false;
 
             if (!isTextarea) {
                 element.attr('contenteditable', true);
@@ -48,7 +50,8 @@ app.directive('ckeditor', ['$timeout', '$q', function ($timeout, $q) {
                 var options = {
                     toolbar: 'full',
                     toolbar_full: [
-                        { name: 'basicstyles', items: [ 'Bold', 'Italic', 'Strike', 'Underline' ] },
+                        { name: 'basicstyles',
+                            items: [ 'Bold', 'Italic', 'Strike', 'Underline' ] },
                         { name: 'paragraph', items: [ 'BulletedList', 'NumberedList', 'Blockquote' ] },
                         { name: 'editing', items: ['JustifyLeft', 'JustifyCenter', 'JustifyRight', 'JustifyBlock' ] },
                         { name: 'links', items: [ 'Link', 'Unlink', 'Anchor' ] },
@@ -76,13 +79,21 @@ app.directive('ckeditor', ['$timeout', '$q', function ($timeout, $q) {
                     );
                 });
                 var setModelData = function() {
+                    var data = instance.getData();
+                    if (data == EMPTY_HTML) {
+                        data = null;
+                    }
                     $timeout(function () { // for key up event
-                        ngModel.$setViewValue(instance.getData());
+                        ngModel.$setViewValue(data);
                     }, 0);
                 }, onUpdateModelData = function() {
-                    scope.$apply(function() {
-                        instance.setData(ngModel.$viewValue || EMPTY_HTML);
-                    });
+                    if (!data.length) { return; }
+
+                        var item = data.pop();
+                        instance.setData(item || EMPTY_HTML, function () {
+                            setModelData();
+                            isReady = false;
+                        });
                 }
 
                 instance.on('pasteState',   setModelData);
@@ -90,26 +101,28 @@ app.directive('ckeditor', ['$timeout', '$q', function ($timeout, $q) {
                 instance.on('blur',         setModelData);
                 instance.on('key',          setModelData); // for source view
 
-                instance.on('instanceReady', onUpdateModelData);
+                instance.on('instanceReady', function() {
+                    scope.$apply(function() {
+                        onUpdateModelData()
+                    });
+                });
                 instance.on('customConfigLoaded', function() {
                     configLoaderDef.resolve();
                 });
 
                 ngModel.$render = function() {
-                    instance.setData(ngModel.$viewValue || EMPTY_HTML);
-                };
-
-                scope.$watch(function () {
-                    if (!element) {
-                        return null;
+                    if (ngModel.$viewValue === undefined) {
+                        ngModel.$setViewValue(null);
+                        ngModel.$viewValue = null;
                     }
-                    return instance.getData();
-                }, function (val, oldVal) {
-                    /*if (val === EMPTY_HTML && (angular.isUndefined(oldVal) || oldVal === EMPTY_HTML)) { // when ckeditor loaded first
-                        return;
-                    }*/
-                    setModelData();
-                });
+
+                    data.push(ngModel.$viewValue);
+                    if (!isReady) {
+                        isReady = false;
+
+                        onUpdateModelData();
+                    }
+                };
             };
 
             if (CKEDITOR.status == 'loaded') {
