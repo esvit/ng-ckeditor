@@ -22,7 +22,7 @@ module.exports = function(config) {
 
 
       // directive
-      'src/scripts/02-directive.js',
+      'ng-ckeditor.src.js',
 
       // tests
       'test/*.js'
