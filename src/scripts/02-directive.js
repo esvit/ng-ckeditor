@@ -80,11 +80,12 @@ app.directive('ckeditor', ['$timeout', '$q', function ($timeout, $q) {
                 }, onUpdateModelData = function() {
                     if (!data.length) { return; }
 
-                        var item = data.pop();
-                        instance.setData(item || EMPTY_HTML, function () {
-                            setModelData();
-                            isReady = false;
-                        });
+                    var item = data.pop() || EMPTY_HTML;
+                    isReady = false;
+                    instance.setData(item, function () {
+                        setModelData();
+                        isReady = true;
+                    });
                 }
 
                 instance.on('pasteState',   setModelData);
@@ -108,9 +109,7 @@ app.directive('ckeditor', ['$timeout', '$q', function ($timeout, $q) {
                     }
 
                     data.push(ngModel.$viewValue);
-                    if (!isReady) {
-                        isReady = false;
-
+                    if (isReady) {
                         onUpdateModelData();
                     }
                 };
