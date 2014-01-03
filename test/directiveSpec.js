@@ -51,7 +51,8 @@ describe('ng-ckeditor', function () {
             $rootScope.$apply();
 
             setTimeout(function() {
-                expect(instance.getData()).toBe('<p>new value</p>\n');
+                // instance not ready
+                expect(instance.getData()).toBe('');
                 expect(scope.test).toBe('new value');
             }, 10);
 
@@ -65,7 +66,7 @@ describe('ng-ckeditor', function () {
         });
         waitsFor(function() {
             return flag;
-        }, "instance should be ready", 100);
+        }, "instance should be ready", 1000);
     }));
 
     it('should async change model value editor', inject(function ($timeout, $rootScope, $document) {
