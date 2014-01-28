@@ -3,7 +3,7 @@
     "version": "0.2.0",
     "main": "ng-ckeditor.js",
     "dependencies": {
-        "angular": "1.2.3"
+        "angular": "1.2.x"
     },
     "devDependencies": {
         "jquery": "~2.0.3",
