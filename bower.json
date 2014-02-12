@@ -3,11 +3,11 @@
     "version": "0.2.0",
     "main": "ng-ckeditor.js",
     "dependencies": {
-        "angular": "1.2.3"
+        "angular": "~1.2.9"
     },
     "devDependencies": {
         "jquery": "~2.0.3",
-        "angular-mocks": "1.2.3",
+        "angular-mocks": "~1.2.9",
         "jquery.simulate": "~1.2.0"
     }
 }
