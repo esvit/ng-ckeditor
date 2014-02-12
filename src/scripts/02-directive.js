@@ -25,11 +25,11 @@ app.directive('ckeditor', ['$timeout', '$q', function ($timeout, $q) {
 
     return {
         restrict: 'AC',
-        require: ['ngModel', '^form'],
+        require: ['ngModel', '^?form'],
         scope: false,
         link: function (scope, element, attrs, ctrls) {
             var ngModel = ctrls[0];
-            var form    = ctrls[1];
+            var form    = ctrls[1] || null;
             var EMPTY_HTML = '<p></p>',
                 isTextarea = element[0].tagName.toLowerCase() == 'textarea',
                 data = [],
@@ -71,34 +71,35 @@ app.directive('ckeditor', ['$timeout', '$q', function ($timeout, $q) {
                         false //If the instance is replacing a DOM element, this parameter indicates whether or not to update the element with the instance contents.
                     );
                 });
-                var setModelData = function() {
+                var setModelData = function(setPristine) {
                     var data = instance.getData();
                     if (data == EMPTY_HTML) {
                         data = null;
                     }
                     $timeout(function () { // for key up event
                         ngModel.$setViewValue(data);
+                        (setPristine === true && form) && form.$setPristine();
                     }, 0);
-                }, onUpdateModelData = function() {
+                }, onUpdateModelData = function(setPristine) {
                     if (!data.length) { return; }
+
 
                     var item = data.pop() || EMPTY_HTML;
                     isReady = false;
                     instance.setData(item, function () {
-                        setModelData();
+                        setModelData(setPristine);
                         isReady = true;
                     });
                 }
 
-                instance.on('pasteState',   setModelData);
+                //instance.on('pasteState',   setModelData);
                 instance.on('change',       setModelData);
                 instance.on('blur',         setModelData);
                 instance.on('key',          setModelData); // for source view
 
                 instance.on('instanceReady', function() {
                     scope.$apply(function() {
-                        onUpdateModelData();
-                        form.$setPristine();
+                        onUpdateModelData(true);
                     });
                 });
                 instance.on('customConfigLoaded', function() {

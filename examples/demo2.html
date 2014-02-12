@@ -16,12 +16,16 @@
         <link rel="stylesheet" href="../ng-ckeditor.css">
     </head>
 <body ng-app="main">
-    <h1>Simple editor</h1>
+    <h1>Editor on form</h1>
 
     <div ng-controller="DemoCtrl">
-        <textarea ckeditor="editorOptions" ng-model="test"></textarea>
 
-        {{test}}
+        <form name="testForm">
+            {{testForm.body.$pristine}}
+            {{test}}
+        <textarea name="body" ckeditor="editorOptions" ng-model="test"></textarea>
+        </form>
+
         <button ng-click="save()">Save</button>
 
         <script>

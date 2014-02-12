@@ -6,7 +6,7 @@ describe('ng-ckeditor', function () {
 
     beforeEach(inject(function ($rootScope, $compile, $document) {
         elm = angular.element(
-            '<span>{{test}}<textarea ckeditor id="' + 'editor' + i + '" ng-model="test"></textarea></span>');
+            '<form name="testForm">{{test}}<div><textarea id="' + 'editor' + i + '" ckeditor ng-model="test"></textarea></div></form>');
 
         scope = $rootScope.$new(true);
 
@@ -54,6 +54,7 @@ describe('ng-ckeditor', function () {
                 // instance not ready
                 expect(instance.getData()).toBe('');
                 expect(scope.test).toBe('new value');
+                expect(scope.testForm.$dirty).toBe(false);
             }, 10);
 
             instance.on('instanceReady', function() {
@@ -61,6 +62,7 @@ describe('ng-ckeditor', function () {
                 expect(content.html()).toBe('<p>new value</p>');
                 expect(instance.getData()).toBe('<p>new value</p>\n');
                 expect(scope.test).toBe('<p>new value</p>\n');
+                expect(scope.testForm.$dirty).toBe(false);
                 flag = true;
             });
         });
@@ -96,6 +98,7 @@ describe('ng-ckeditor', function () {
                 scope.$apply();
                 flag = true;
                 expect(scope.test).toBe('<p>&nbsp;</p>\n\n<p>test again</p>\n');
+                expect(scope.testForm.$dirty).toBe(true);
             }, 1200);
         });
         waitsFor(function() {
