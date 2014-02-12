@@ -25,9 +25,11 @@ app.directive('ckeditor', ['$timeout', '$q', function ($timeout, $q) {
 
     return {
         restrict: 'AC',
-        require: 'ngModel',
+        require: ['ngModel', '^form'],
         scope: false,
-        link: function (scope, element, attrs, ngModel) {
+        link: function (scope, element, attrs, ctrls) {
+            var ngModel = ctrls[0];
+            var form    = ctrls[1];
             var EMPTY_HTML = '<p></p>',
                 isTextarea = element[0].tagName.toLowerCase() == 'textarea',
                 data = [],
@@ -95,7 +97,8 @@ app.directive('ckeditor', ['$timeout', '$q', function ($timeout, $q) {
 
                 instance.on('instanceReady', function() {
                     scope.$apply(function() {
-                        onUpdateModelData()
+                        onUpdateModelData();
+                        form.$setPristine();
                     });
                 });
                 instance.on('customConfigLoaded', function() {
