@@ -21,7 +21,7 @@ angular.module('app', ['ngCkeditor'])
 
 // setup editor options
 $scope.editorOptions = {
-    language: 'ru'
+    language: 'ru',
     uiColor: '#000000'
 };
 ```
