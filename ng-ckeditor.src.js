@@ -86,8 +86,11 @@ app.directive('ckeditor', ['$timeout', '$q', function ($timeout, $q) {
                         data = null;
                     }
                     $timeout(function () { // for key up event
-                        ngModel.$setViewValue(data);
-                        (setPristine === true && form) && form.$setPristine();
+                        // Only call setViewValue if we need to change something
+                        if (ngModel.$viewValue !== data) {
+                            ngModel.$setViewValue(data);
+                            (setPristine === true && form) && form.$setPristine();
+                        }
                     }, 0);
                 }, onUpdateModelData = function(setPristine) {
                     if (!data.length) { return; }
