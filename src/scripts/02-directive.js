@@ -98,6 +98,7 @@ app.directive('ckeditor', ['$timeout', '$q', function ($timeout, $q) {
                 //instance.on('key',          setModelData); // for source view
 
                 instance.on('instanceReady', function() {
+                    scope.$broadcast("ckeditor.ready");
                     scope.$apply(function() {
                         onUpdateModelData(true);
                     });

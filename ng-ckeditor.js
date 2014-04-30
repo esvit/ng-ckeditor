@@ -1,4 +1,142 @@
-!function(a,b){return"function"==typeof define&&define.amd?(define(["angular","ckeditor"],function(a){return b(a)}),void 0):b(a)}(angular||null,function(a){var b,c=a.module("ngCkeditor",[]),d=!1;return c.run(["$q","$timeout",function(c,e){function f(){"loaded"==CKEDITOR.status?(d=!0,b.resolve()):f()}if(b=c.defer(),a.isUndefined(CKEDITOR))throw new Error("CKEDITOR not found");CKEDITOR.disableAutoInline=!0,CKEDITOR.on("loaded",f),e(f,100)}]),c.directive("ckeditor",["$timeout","$q",function(c,e){"use strict";return{restrict:"AC",require:["ngModel","^?form"],scope:!1,link:function(f,g,h,i){var j=i[0],k=i[1]||null,l="<p></p>",m="textarea"==g[0].tagName.toLowerCase(),n=[],o=!1;m||g.attr("contenteditable",!0);var p=function(){var b={toolbar:"full",toolbar_full:[{name:"basicstyles",items:["Bold","Italic","Strike","Underline"]},{name:"paragraph",items:["BulletedList","NumberedList","Blockquote"]},{name:"editing",items:["JustifyLeft","JustifyCenter","JustifyRight","JustifyBlock"]},{name:"links",items:["Link","Unlink","Anchor"]},{name:"tools",items:["SpellChecker","Maximize"]},"/",{name:"styles",items:["Format","FontSize","TextColor","PasteText","PasteFromWord","RemoveFormat"]},{name:"insert",items:["Image","Table","SpecialChar"]},{name:"forms",items:["Outdent","Indent"]},{name:"clipboard",items:["Undo","Redo"]},{name:"document",items:["PageBreak","Source"]}],disableNativeSpellChecker:!1,uiColor:"#FAFAFA",height:"400px",width:"100%"};b=a.extend(b,f[h.ckeditor]);var d=m?CKEDITOR.replace(g[0],b):CKEDITOR.inline(g[0],b),i=e.defer();g.bind("$destroy",function(){d.destroy(!1)});var p=function(a){var b=d.getData();""==b&&(b=null),c(function(){(a!==!0||b!=j.$viewValue)&&j.$setViewValue(b),a===!0&&k&&k.$setPristine()},0)},q=function(a){if(n.length){var b=n.pop()||l;o=!1,d.setData(b,function(){p(a),o=!0})}};d.on("change",p),d.on("blur",p),d.on("instanceReady",function(){f.$apply(function(){q(!0)}),d.document.on("keyup",p)}),d.on("customConfigLoaded",function(){i.resolve()}),j.$render=function(){n.push(j.$viewValue),o&&q()}};"loaded"==CKEDITOR.status&&(d=!0),d?p():b.promise.then(p)}}}]),c});
-/*
-//@ sourceMappingURL=ng-ckeditor.map
-*/
+(function(angular, factory) {
+    if (typeof define === 'function' && define.amd) {
+        define(['angular', 'ckeditor'], function(angular) {
+            return factory(angular);
+        });
+    } else {
+        return factory(angular);
+    }
+}(angular || null, function(angular) {
+var app = angular.module('ngCkeditor', []);
+var $defer, loaded = false;
+
+app.run(['$q', '$timeout', function($q, $timeout) {
+    $defer = $q.defer();
+
+    if (angular.isUndefined(CKEDITOR)) {
+        throw new Error('CKEDITOR not found');
+    }
+    CKEDITOR.disableAutoInline = true;
+    function checkLoaded() {
+        if (CKEDITOR.status == 'loaded') {
+            loaded = true;
+            $defer.resolve();
+        } else {
+            checkLoaded();
+        }
+    }
+    CKEDITOR.on('loaded', checkLoaded);
+    $timeout(checkLoaded, 100);
+}])
+
+app.directive('ckeditor', ['$timeout', '$q', function ($timeout, $q) {
+    'use strict';
+
+    return {
+        restrict: 'AC',
+        require: ['ngModel', '^?form'],
+        scope: false,
+        link: function (scope, element, attrs, ctrls) {
+            var ngModel = ctrls[0];
+            var form    = ctrls[1] || null;
+            var EMPTY_HTML = '<p></p>',
+                isTextarea = element[0].tagName.toLowerCase() == 'textarea',
+                data = [],
+                isReady = false;
+
+            if (!isTextarea) {
+                element.attr('contenteditable', true);
+            }
+
+            var onLoad = function () {
+                var options = {
+                    toolbar: 'full',
+                    toolbar_full: [
+                        { name: 'basicstyles',
+                            items: [ 'Bold', 'Italic', 'Strike', 'Underline' ] },
+                        { name: 'paragraph', items: [ 'BulletedList', 'NumberedList', 'Blockquote' ] },
+                        { name: 'editing', items: ['JustifyLeft', 'JustifyCenter', 'JustifyRight', 'JustifyBlock' ] },
+                        { name: 'links', items: [ 'Link', 'Unlink', 'Anchor' ] },
+                        { name: 'tools', items: [ 'SpellChecker', 'Maximize' ] },
+                        '/',
+                        { name: 'styles', items: [ 'Format', 'FontSize', 'TextColor', 'PasteText', 'PasteFromWord', 'RemoveFormat' ] },
+                        { name: 'insert', items: [ 'Image', 'Table', 'SpecialChar' ] },
+                        { name: 'forms', items: [ 'Outdent', 'Indent' ] },
+                        { name: 'clipboard', items: [ 'Undo', 'Redo' ] },
+                        { name: 'document', items: [ 'PageBreak', 'Source' ] }
+                    ],
+                    disableNativeSpellChecker: false,
+                    uiColor: '#FAFAFA',
+                    height: '400px',
+                    width: '100%'
+                };
+                options = angular.extend(options, scope[attrs.ckeditor]);
+
+                var instance = (isTextarea) ? CKEDITOR.replace(element[0], options) : CKEDITOR.inline(element[0], options),
+                    configLoaderDef = $q.defer();
+
+                element.bind('$destroy', function () {
+                    instance.destroy(
+                        false //If the instance is replacing a DOM element, this parameter indicates whether or not to update the element with the instance contents.
+                    );
+                });
+                var setModelData = function(setPristine) {
+                    var data = instance.getData();
+                    if (data == '') {
+                        data = null;
+                    }
+                    $timeout(function () { // for key up event
+                        (setPristine !== true || data != ngModel.$viewValue) && ngModel.$setViewValue(data);
+                        (setPristine === true && form) && form.$setPristine();
+                    }, 0);
+                }, onUpdateModelData = function(setPristine) {
+                    if (!data.length) { return; }
+
+
+                    var item = data.pop() || EMPTY_HTML;
+                    isReady = false;
+                    instance.setData(item, function () {
+                        setModelData(setPristine);
+                        isReady = true;
+                    });
+                }
+
+                //instance.on('pasteState',   setModelData);
+                instance.on('change',       setModelData);
+                instance.on('blur',         setModelData);
+                //instance.on('key',          setModelData); // for source view
+
+                instance.on('instanceReady', function() {
+                    scope.$broadcast("ckeditor.ready");
+                    scope.$apply(function() {
+                        onUpdateModelData(true);
+                    });
+
+                    instance.document.on("keyup", setModelData);
+                });
+                instance.on('customConfigLoaded', function() {
+                    configLoaderDef.resolve();
+                });
+
+                ngModel.$render = function() {
+                    data.push(ngModel.$viewValue);
+                    if (isReady) {
+                        onUpdateModelData();
+                    }
+                };
+            };
+
+            if (CKEDITOR.status == 'loaded') {
+                loaded = true;
+            }
+            if (loaded) {
+                onLoad();
+            } else {
+                $defer.promise.then(onLoad);
+            }
+        }
+    };
+}]);
+
+    return app;
+}));

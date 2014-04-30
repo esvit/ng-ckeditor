@@ -1,6 +1,9 @@
 
 module.exports = function (grunt) {
     grunt.initConfig({
+        cmpnt: grunt.file.readJSON('bower.json'),
+        banner: '/*! ngCkeditor v<%= cmpnt.version %> by Vitalii Savchuk(esvit666@gmail.com) - ' +
+            'https://github.com/esvit/ng-ckeditor - New BSD License */\n',
         clean: {
             working: {
                 src: ['ng-ckeditor.*', './.temp/']
@@ -18,9 +21,10 @@ module.exports = function (grunt) {
         },
         uglify: {
             js: {
-                src: ['ng-ckeditor.src.js'],
-                dest: 'ng-ckeditor.js',
+                src: ['ng-ckeditor.js'],
+                dest: 'ng-ckeditor.min.js',
                 options: {
+                    banner: '<%= banner %>',
                     sourceMap: function (fileName) {
                         return fileName.replace(/\.js$/, '.map');
                     }
@@ -30,7 +34,7 @@ module.exports = function (grunt) {
         concat: {
             js: {
                 src: ['src/scripts/*.js'],
-                dest: 'ng-ckeditor.src.js'
+                dest: 'ng-ckeditor.js'
             }
         },
         less: {

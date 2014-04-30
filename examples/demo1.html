@@ -19,10 +19,23 @@
     <h1>Simple editor</h1>
 
     <div ng-controller="DemoCtrl">
-        <textarea ckeditor="editorOptions" ng-model="test"></textarea>
 
-        {{test}}
-        <button ng-click="save()">Save</button>
+        <form name="frm">
+
+            <div ng-cloak ng-hide="isReady" class="highlight">
+                Initialising ...
+            </div>
+
+            <div ng-cloak ng-show="isReady">
+                <textarea ckeditor="editorOptions" name="editor" ng-model="test" ng-change="save()"></textarea>
+            </div>
+
+            {{test}}
+            <button ng-click="save()">Save</button>
+
+            {{frm.editor.$dirty}}
+            {{frm.$dirty}}
+        </form>
 
         <script>
         var app = angular.module('main', ['ngCkeditor']).
@@ -31,12 +44,19 @@
                 language: 'ru'
                // uiColor: '#000000'
             };
+            $scope.$on("ckeditor.ready", function( event ) {
+                $scope.isReady = true;
+            });
+            $scope.test = '<p>Hello</p>\n';
             $scope.save = function() {
                 $http.post('/examples/test.php', {
                     content: $scope.test
                 }).success(function() {
                     alert('Saved');
                 });
+            }
+            $scope.save = function() {
+                console.info($scope.test, 'save');
             }
         })
         </script>
