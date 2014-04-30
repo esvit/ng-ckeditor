@@ -29,7 +29,7 @@ app.run(['$q', '$timeout', function($q, $timeout) {
     $timeout(checkLoaded, 100);
 }])
 
-app.directive('ckeditor', ['$timeout', '$q', function ($timeout, $q) {
+app.directive('$rootScope', 'ckeditor', ['$timeout', '$q', function ($rootScope, $timeout, $q) {
     'use strict';
 
     return {
@@ -107,6 +107,8 @@ app.directive('ckeditor', ['$timeout', '$q', function ($timeout, $q) {
                 instance.on('key',          setModelData); // for source view
 
                 instance.on('instanceReady', function() {
+                    $rootScope.$broadcast( "ckeditor.ready" );
+
                     scope.$apply(function() {
                         onUpdateModelData(true);
                     });
