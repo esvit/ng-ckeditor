@@ -82,11 +82,11 @@ app.directive('ckeditor', ['$timeout', '$q', function ($timeout, $q) {
                 });
                 var setModelData = function(setPristine) {
                     var data = instance.getData();
-                    if (data == EMPTY_HTML) {
+                    if (data == '') {
                         data = null;
                     }
                     $timeout(function () { // for key up event
-                        (setPristine !== true) && ngModel.$setViewValue(data);
+                        (setPristine !== true || data != ngModel.$viewValue) && ngModel.$setViewValue(data);
                         (setPristine === true && form) && form.$setPristine();
                     }, 0);
                 }, onUpdateModelData = function(setPristine) {
@@ -118,11 +118,6 @@ app.directive('ckeditor', ['$timeout', '$q', function ($timeout, $q) {
                 });
 
                 ngModel.$render = function() {
-                    if (ngModel.$viewValue === undefined) {
-                        ngModel.$setViewValue(null);
-                        ngModel.$viewValue = null;
-                    }
-
                     data.push(ngModel.$viewValue);
                     if (isReady) {
                         onUpdateModelData();
