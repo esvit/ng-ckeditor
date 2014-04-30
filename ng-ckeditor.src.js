@@ -29,7 +29,7 @@ app.run(['$q', '$timeout', function($q, $timeout) {
     $timeout(checkLoaded, 100);
 }])
 
-app.directive('$rootScope', 'ckeditor', ['$timeout', '$q', function ($rootScope, $timeout, $q) {
+app.directive('ckeditor', ['$timeout', '$q', function ($timeout, $q) {
     'use strict';
 
     return {
@@ -81,12 +81,12 @@ app.directive('$rootScope', 'ckeditor', ['$timeout', '$q', function ($rootScope,
                     );
                 });
                 var setModelData = function(setPristine) {
+                    var data = instance.getData();
+                    if (data == EMPTY_HTML) {
+                        data = null;
+                    }
                     $timeout(function () { // for key up event
-                        var data = instance.getData();
-                        if (data == EMPTY_HTML) {
-                            data = null;
-                        }
-                        ngModel.$setViewValue(data);
+                        (setPristine !== true) && ngModel.$setViewValue(data);
                         (setPristine === true && form) && form.$setPristine();
                     }, 0);
                 }, onUpdateModelData = function(setPristine) {
@@ -104,14 +104,14 @@ app.directive('$rootScope', 'ckeditor', ['$timeout', '$q', function ($rootScope,
                 //instance.on('pasteState',   setModelData);
                 instance.on('change',       setModelData);
                 instance.on('blur',         setModelData);
-                instance.on('key',          setModelData); // for source view
+                //instance.on('key',          setModelData); // for source view
 
                 instance.on('instanceReady', function() {
-                    $rootScope.$broadcast( "ckeditor.ready" );
-
                     scope.$apply(function() {
                         onUpdateModelData(true);
                     });
+
+                    instance.document.on("keyup", setModelData);
                 });
                 instance.on('customConfigLoaded', function() {
                     configLoaderDef.resolve();

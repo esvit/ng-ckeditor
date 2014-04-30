@@ -77,7 +77,7 @@ app.directive('ckeditor', ['$timeout', '$q', function ($timeout, $q) {
                         data = null;
                     }
                     $timeout(function () { // for key up event
-                        ngModel.$setViewValue(data);
+                        (setPristine !== true) && ngModel.$setViewValue(data);
                         (setPristine === true && form) && form.$setPristine();
                     }, 0);
                 }, onUpdateModelData = function(setPristine) {
@@ -95,12 +95,14 @@ app.directive('ckeditor', ['$timeout', '$q', function ($timeout, $q) {
                 //instance.on('pasteState',   setModelData);
                 instance.on('change',       setModelData);
                 instance.on('blur',         setModelData);
-                instance.on('key',          setModelData); // for source view
+                //instance.on('key',          setModelData); // for source view
 
                 instance.on('instanceReady', function() {
                     scope.$apply(function() {
                         onUpdateModelData(true);
                     });
+
+                    instance.document.on("keyup", setModelData);
                 });
                 instance.on('customConfigLoaded', function() {
                     configLoaderDef.resolve();
