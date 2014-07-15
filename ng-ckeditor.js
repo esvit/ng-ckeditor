@@ -29,7 +29,7 @@ app.run(['$q', '$timeout', function($q, $timeout) {
     $timeout(checkLoaded, 100);
 }])
 
-app.directive('ckeditor', ['$timeout', '$q', function ($timeout, $q) {
+app.directive('ckeditor', ['$timeout', '$q', '$parse', function ($timeout, $q, $parse) {
     'use strict';
 
     return {
@@ -70,7 +70,7 @@ app.directive('ckeditor', ['$timeout', '$q', function ($timeout, $q) {
                     height: '400px',
                     width: '100%'
                 };
-                options = angular.extend(options, scope[attrs.ckeditor]);
+                options = angular.extend(options, $parse(attrs.ckeditor)(scope));
 
                 var instance = (isTextarea) ? CKEDITOR.replace(element[0], options) : CKEDITOR.inline(element[0], options),
                     configLoaderDef = $q.defer();
