@@ -22,11 +22,11 @@ app.run(['$q', '$timeout', function($q, $timeout) {
             loaded = true;
             $defer.resolve();
         } else {
-            checkLoaded();
+            $timeout(checkLoaded, 100);
         }
     }
     CKEDITOR.on('loaded', checkLoaded);
-    $timeout(checkLoaded, 100);
+    checkLoaded();
 }])
 
 app.directive('ckeditor', ['$timeout', '$q', function ($timeout, $q) {
