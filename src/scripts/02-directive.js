@@ -63,6 +63,26 @@ app.directive('ckeditor', ['$timeout', '$q', function ($timeout, $q) {
                 };
                 options = angular.extend(options, scope[attrs.ckeditor]);
 
+				// you can use ckreadonly attribute to bind a variable
+				// to set the editor readOnly status
+                if (attrs.ckreadonly) {
+					// if ckreadonly attribute is present, 
+					// set editor readOnly option
+                    var isReadOnly = scope.$eval(attrs.ckreadonly);
+                    options.readOnly = isReadOnly;
+
+					// setup a watch on the attribute value
+					// to update the editor readOnly mode 
+					// when value changes
+                    scope.$watch(attrs.ckreadonly, function (value) {
+						// ignore callback if editable instance 
+						// is not ready yet
+                        if (instance && isReady) {
+                            instance.setReadOnly(value);
+                        }
+                    });
+                }
+				
                 var instance = (isTextarea) ? CKEDITOR.replace(element[0], options) : CKEDITOR.inline(element[0], options),
                     configLoaderDef = $q.defer();
 
