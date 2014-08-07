@@ -1,3 +1,5 @@
+/*global define, CKEDITOR*/
+
 (function(angular, factory) {
     if (typeof define === 'function' && define.amd) {
         define(['angular', 'ckeditor'], function(angular) {
@@ -18,7 +20,7 @@ app.run(['$q', '$timeout', function($q, $timeout) {
     }
     CKEDITOR.disableAutoInline = true;
     function checkLoaded() {
-        if (CKEDITOR.status == 'loaded') {
+        if (CKEDITOR.status === 'loaded') {
             loaded = true;
             $defer.resolve();
         } else {
@@ -27,7 +29,7 @@ app.run(['$q', '$timeout', function($q, $timeout) {
     }
     CKEDITOR.on('loaded', checkLoaded);
     $timeout(checkLoaded, 100);
-}])
+}]);
 
 app.directive('ckeditor', ['$timeout', '$q', function ($timeout, $q) {
     'use strict';
@@ -40,7 +42,7 @@ app.directive('ckeditor', ['$timeout', '$q', function ($timeout, $q) {
             var ngModel = ctrls[0];
             var form    = ctrls[1] || null;
             var EMPTY_HTML = '<p></p>',
-                isTextarea = element[0].tagName.toLowerCase() == 'textarea',
+                isTextarea = element[0].tagName.toLowerCase() === 'textarea',
                 data = [],
                 isReady = false;
 
@@ -51,7 +53,7 @@ app.directive('ckeditor', ['$timeout', '$q', function ($timeout, $q) {
             var onLoad = function () {
                 var options = {
                     toolbar: 'full',
-                    toolbar_full: [
+                    toolbar_full: [ //jshint ignore:line
                         { name: 'basicstyles',
                             items: [ 'Bold', 'Italic', 'Strike', 'Underline' ] },
                         { name: 'paragraph', items: [ 'BulletedList', 'NumberedList', 'Blockquote' ] },
@@ -82,12 +84,15 @@ app.directive('ckeditor', ['$timeout', '$q', function ($timeout, $q) {
                 });
                 var setModelData = function(setPristine) {
                     var data = instance.getData();
-                    if (data == '') {
+                    if (data === '') {
                         data = null;
                     }
                     $timeout(function () { // for key up event
-                        (setPristine !== true || data != ngModel.$viewValue) && ngModel.$setViewValue(data);
-                        (setPristine === true && form) && form.$setPristine();
+                      if (setPristine !== true || data !== ngModel.$viewValue)
+                        ngModel.$setViewValue(data);
+
+                      if (setPristine === true && form)
+                        form.$setPristine();
                     }, 0);
                 }, onUpdateModelData = function(setPristine) {
                     if (!data.length) { return; }
@@ -99,7 +104,7 @@ app.directive('ckeditor', ['$timeout', '$q', function ($timeout, $q) {
                         setModelData(setPristine);
                         isReady = true;
                     });
-                }
+                };
 
                 //instance.on('pasteState',   setModelData);
                 instance.on('change',       setModelData);
@@ -107,12 +112,12 @@ app.directive('ckeditor', ['$timeout', '$q', function ($timeout, $q) {
                 //instance.on('key',          setModelData); // for source view
 
                 instance.on('instanceReady', function() {
-                    scope.$broadcast("ckeditor.ready");
+                    scope.$broadcast('ckeditor.ready');
                     scope.$apply(function() {
                         onUpdateModelData(true);
                     });
 
-                    instance.document.on("keyup", setModelData);
+                    instance.document.on('keyup', setModelData);
                 });
                 instance.on('customConfigLoaded', function() {
                     configLoaderDef.resolve();
@@ -126,7 +131,7 @@ app.directive('ckeditor', ['$timeout', '$q', function ($timeout, $q) {
                 };
             };
 
-            if (CKEDITOR.status == 'loaded') {
+            if (CKEDITOR.status === 'loaded') {
                 loaded = true;
             }
             if (loaded) {
