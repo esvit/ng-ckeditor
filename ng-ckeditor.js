@@ -82,9 +82,6 @@ app.directive('ckeditor', ['$timeout', '$q', function ($timeout, $q) {
                 });
                 var setModelData = function(setPristine) {
                     var data = instance.getData();
-                    if (data == '') {
-                        data = null;
-                    }
                     $timeout(function () { // for key up event
                         (setPristine !== true || data != ngModel.$viewValue) && ngModel.$setViewValue(data);
                         (setPristine === true && form) && form.$setPristine();
