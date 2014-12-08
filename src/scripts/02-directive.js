@@ -101,7 +101,7 @@ app.directive('ckeditor', ['$timeout', '$q', function ($timeout, $q) {
                         (setPristine === true && form) && form.$setPristine();
                     }, 0);
                 }, onUpdateModelData = function(setPristine) {
-                    if (!data.length) { return; }
+                    if (!data.length || data[0] === null)) { return; }
 
 
                     var item = data.pop() || EMPTY_HTML;
