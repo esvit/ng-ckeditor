@@ -118,12 +118,14 @@ app.directive('ckeditor', ['$timeout', '$q', function ($timeout, $q) {
                 //instance.on('key',          setModelData); // for source view
 
                 instance.on('instanceReady', function() {
-                    scope.$broadcast("ckeditor.ready");
-                    scope.$apply(function() {
-                        onUpdateModelData(true);
-                    });
+                    instance.once('contentDom', function() {
+                        scope.$broadcast("ckeditor.ready");
+                        scope.$apply(function() {
+                            onUpdateModelData(true);
+                        });
 
-                    instance.document.on("keyup", setModelData);
+                        instance.document.on("keyup", setModelData);
+                    });
                 });
                 instance.on('customConfigLoaded', function() {
                     configLoaderDef.resolve();
