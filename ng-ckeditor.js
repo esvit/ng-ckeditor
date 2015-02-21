@@ -83,9 +83,9 @@
                         configLoaderDef = $q.defer();
 
                     element.bind('$destroy', function () {
-                        instance.destroy(
-                            false //If the instance is replacing a DOM element, this parameter indicates whether or not to update the element with the instance contents.
-                        );
+                        if (instance && CKEDITOR.instances[instance.name]) {
+                            CKEDITOR.instances[instance.name].destroy();
+                        }
                     });
                     var setModelData = function (setPristine) {
                         var data = instance.getData();
