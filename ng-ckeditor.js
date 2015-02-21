@@ -106,7 +106,6 @@
                             return;
                         }
 
-
                         var item = data.pop() || EMPTY_HTML;
                         isReady = false;
                         instance.setData(item, function () {

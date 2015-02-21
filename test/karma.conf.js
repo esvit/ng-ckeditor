@@ -18,11 +18,10 @@ module.exports = function (config) {
 
         // list of files / patterns to load in the browser
         files: [
-            'bower_components/es5-shim/es5-shim.js',
-            'bower_components/es5-shim/tests/lib/*.js',
+            'bower_components/jquery/dist/jquery.js',
+            'bower_components/jquery-simulate/jquery.simulate.js',
             'bower_components/angular/angular.js',
             'bower_components/angular-mocks/angular-mocks.js',
-            'bower_components/jquery/dist/jquery.js',
             'bower_components/ckeditor/ckeditor.js',
 
             {
@@ -62,7 +61,7 @@ module.exports = function (config) {
 
         // Continuous Integration mode
         // if true, it capture browsers, run tests and exit
-        singleRun: false,
+        singleRun: true,
 
         colors: true,
 
