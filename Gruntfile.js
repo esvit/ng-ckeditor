@@ -1,19 +1,25 @@
+'use strict';
 
 module.exports = function (grunt) {
+
+    // Load grunt tasks automatically
+    require('load-grunt-tasks')(grunt);
+
+    // Time how long tasks take. Can help when optimizing build times
+    require('time-grunt')(grunt);
+
     grunt.initConfig({
-        cmpnt: grunt.file.readJSON('bower.json'),
-        banner: '/*! ngCkeditor v<%= cmpnt.version %> by Vitalii Savchuk(esvit666@gmail.com) - ' +
-            'https://github.com/esvit/ng-ckeditor - New BSD License */\n',
-        clean: {
-            working: {
-                src: ['ng-ckeditor.*', './.temp/']
-            }
-        },
+
+        // Project settings
+        app: require('./bower.json'),
+
+        banner: '/*! ngCkeditor v<%= app.version %> by Vitalii Savchuk(esvit666@gmail.com) - ' +
+        'https://github.com/esvit/ng-ckeditor - New BSD License */\n',
         copy: {
             styles: {
                 files: [
                     {
-                        src: './src/styles/ng-ckeditor.css',
+                        src: './styles/ng-ckeditor.css',
                         dest: './ng-ckeditor.css'
                     }
                 ]
@@ -31,16 +37,10 @@ module.exports = function (grunt) {
                 }
             }
         },
-        concat: {
-            js: {
-                src: ['src/scripts/*.js'],
-                dest: 'ng-ckeditor.js'
-            }
-        },
         less: {
             css: {
                 files: {
-                    'ng-ckeditor.css': 'src/styles/ng-ckeditor.less'
+                    'ng-ckeditor.css': './styles/ng-ckeditor.less'
                 }
             }
         },
@@ -50,15 +50,49 @@ module.exports = function (grunt) {
                     'ng-ckeditor.css': 'ng-ckeditor.css'
                 }
             }
+        },
+
+        // Make sure code styles are up to par and there are no obvious mistakes
+        jshint: {
+            options: {
+                jshintrc: '.jshintrc',
+                reporter: require('jshint-stylish')
+            },
+            all: {
+                src: [
+                    'Gruntfile.js',
+                    'src/scripts/{,*/}*.js'
+                ]
+            },
+            test: {
+                options: {
+                    jshintrc: 'test/.jshintrc'
+                },
+                src: ['test/spec/{,*/}*.js']
+            }
+        },
+
+        // Test settings
+        karma: {
+            unit: {
+                configFile: 'test/karma.conf.js',
+                singleRun: true
+            }
         }
     });
-    grunt.loadNpmTasks('grunt-contrib-clean');
-    grunt.loadNpmTasks('grunt-contrib-copy');
-    grunt.loadNpmTasks('grunt-contrib-less');
-    grunt.loadNpmTasks('grunt-contrib-cssmin');
-    grunt.loadNpmTasks('grunt-contrib-uglify');
-    grunt.loadNpmTasks('grunt-contrib-concat');
-    grunt.registerTask('dev', ['clean', 'concat', 'less', 'copy']);
 
-    return grunt.registerTask('default', ['dev', 'uglify', 'cssmin']);
+    grunt.registerTask('test', [
+        'karma'
+    ]);
+
+    grunt.registerTask('dev', [
+        'jshint',
+        'less'
+    ]);
+
+    grunt.registerTask('default', [
+        'dev',
+        'uglify',
+        'cssmin'
+    ]);
 };
