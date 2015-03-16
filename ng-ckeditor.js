@@ -77,7 +77,7 @@
                         height: '400px',
                         width: '100%'
                     };
-                    options = angular.extend(options, scope[attrs.ckeditor]);
+                    options = angular.extend(options, scope.$eval(attrs.ckeditor));
 
                     var instance = (isTextarea) ? CKEDITOR.replace(element[0], options) : CKEDITOR.inline(element[0], options),
                         configLoaderDef = $q.defer();
