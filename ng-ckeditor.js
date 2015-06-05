@@ -126,16 +126,24 @@ app.directive('ckeditor', ['$timeout', '$q', function ($timeout, $q) {
                 instance.on('blur',         setModelData);
                 //instance.on('key',          setModelData); // for source view
 
-                instance.on('instanceReady', function() {
-                    instance.once('contentDom', function() {
-                        scope.$broadcast("ckeditor.ready");
-                        scope.$apply(function() {
-                            onUpdateModelData(true);
-                        });
-
-                        instance.document.on("keyup", setModelData);
+                var onInstanceReady = function() {
+                    scope.$broadcast("ckeditor.ready");
+                    scope.$apply(function() {
+                        onUpdateModelData(true);
                     });
+
+                    instance.document.on("keyup", setModelData);
+                };
+
+                instance.on('instanceReady', function() {
+                    if (isTextarea) {
+                        instance.once('contentDom', onInstanceReady);
+                    }
+                    else {
+                        onInstanceReady();
+                    }
                 });
+
                 instance.on('customConfigLoaded', function() {
                     configLoaderDef.resolve();
                 });
