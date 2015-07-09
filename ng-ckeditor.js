@@ -125,7 +125,11 @@
                             onUpdateModelData(true);
                         });
 
-                        instance.document.on('keyup', setModelData);
+                        if (instance.document) {
+                            instance.document.on('keyup', setModelData);
+                        } else {
+                            instance.on('keyup', setModelData);
+                        }
                     });
                     instance.on('customConfigLoaded', function () {
                         configLoaderDef.resolve();
