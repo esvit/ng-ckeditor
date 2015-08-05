@@ -114,22 +114,26 @@
                         });
                     };
 
-                    //instance.on('pasteState',   setModelData);
-                    instance.on('change', setModelData);
-                    instance.on('blur', setModelData);
-                    //instance.on('key',          setModelData); // for source view
+                    var setupListeners = function() {
+                      //instance.on('pasteState',   setModelData);
+                      instance.on('change',       setModelData);
+                      instance.on('blur',         setModelData);
+                      //instance.on('key',          setModelData); // for source view
 
-                    instance.on('instanceReady', function () {
-                        scope.$broadcast('ckeditor.ready');
-                        scope.$apply(function () {
-                            onUpdateModelData(true);
-                        });
+                      instance.on('instanceReady', function() {
+                          scope.$broadcast("ckeditor.ready");
+                          scope.$apply(function() {
+                              onUpdateModelData(true);
+                          });
 
-                        instance.document.on('keyup', setModelData);
-                    });
-                    instance.on('customConfigLoaded', function () {
-                        configLoaderDef.resolve();
-                    });
+                          instance.document.on("keyup", setModelData);
+                      });
+                      instance.on('customConfigLoaded', function() {
+                          configLoaderDef.resolve();
+                      });
+                    };
+
+                    setupListeners();
 
                     ngModel.$render = function () {
                         data.push(ngModel.$viewValue);
@@ -137,6 +141,12 @@
                             onUpdateModelData();
                         }
                     };
+
+                    scope.$on('ckeditor.refresh', function() {
+                        instance.destroy();
+                        instance = (isTextarea) ? CKEDITOR.replace(element[0], options) : CKEDITOR.inline(element[0], options);
+                        setupListeners();
+                    });
                 };
 
                 if (CKEDITOR.status === 'loaded') {
