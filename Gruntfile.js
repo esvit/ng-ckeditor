@@ -79,6 +79,20 @@ module.exports = function (grunt) {
                 singleRun: true
             }
         }
+        buildcontrol: {
+            options: {
+                dir: 'dist',
+                commit: true,
+                push: true,
+                message: 'Built %sourceName% from commit %sourceCommit% on branch %sourceBranch%'
+            },
+            pages: {
+                options: {
+                    remote: 'git@github.com:esvit/ng-ckeditor.git',
+                    branch: 'gh-pages'
+                }
+            }
+        }
     });
 
     grunt.registerTask('test', [
