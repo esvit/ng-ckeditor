@@ -114,6 +114,11 @@
                         });
                     };
 
+                    if (options.ngEnableElementBlur) {
+                        element.bind('blur', function () {
+                            setModelData();
+                        });
+                    }
                     //instance.on('pasteState',   setModelData);
                     if (!options.ngDisableOnChange)
                         instance.on('change', setModelData);
