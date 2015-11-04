@@ -114,9 +114,16 @@
                         });
                     };
 
+                    if (options.ngEnableElementBlur) {
+                        element.bind('blur', function () {
+                            setModelData();
+                        });
+                    }
                     //instance.on('pasteState',   setModelData);
-                    instance.on('change', setModelData);
-                    instance.on('blur', setModelData);
+                    if (!options.ngDisableOnChange)
+                        instance.on('change', setModelData);
+                    if (!options.ngDisableOnBlur)
+                        instance.on('blur', setModelData);
                     //instance.on('key',          setModelData); // for source view
 
                     instance.on('instanceReady', function () {
@@ -124,8 +131,8 @@
                         scope.$apply(function () {
                             onUpdateModelData(true);
                         });
-
-                        instance.document.on('keyup', setModelData);
+                        if (!options.ngDisableOnKeyUp)
+                            instance.document.on('keyup', setModelData);
                     });
                     instance.on('customConfigLoaded', function () {
                         configLoaderDef.resolve();
