@@ -88,6 +88,7 @@
                         }
                     });
                     var setModelData = function (setPristine) {
+                        if(!ngModel.$viewValue && ngModel.$viewValue !== ""){return;}
                         var data = instance.getData();
                         if (data === '') {
                             data = null;
