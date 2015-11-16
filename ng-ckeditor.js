@@ -41,7 +41,7 @@
             link: function (scope, element, attrs, ctrls) {
                 var ngModel = ctrls[0];
                 var form = ctrls[1] || null;
-                var EMPTY_HTML = '<p></p>',
+                var EMPTY_HTML = '',
                     isTextarea = element[0].tagName.toLowerCase() === 'textarea',
                     data = [],
                     isReady = false;
