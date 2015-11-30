@@ -83,10 +83,20 @@
                         configLoaderDef = $q.defer();
 
                     element.bind('$destroy', function () {
-                        if (instance && CKEDITOR.instances[instance.name]) {
-                            CKEDITOR.instances[instance.name].destroy();
+                        if (instance && CKEDITOR.instances[instance.name] && (instance.status === 'ready' || instance.status === 'loaded')) {
+                            // Instance is ready/loaded, can destroy immediately
+                            CKEDITOR.instances[instance.name].destroy(true);
+                        }
+                        else if (instance && CKEDITOR.instances[instance.name]) {
+                            // Instance isn't ready/loaded, must wait to destroy
+                            instance.removeAllListeners();
+                            instance.once('loaded', function() {
+                                // Can destroy once instance is loaded
+                                CKEDITOR.instances[instance.name].destroy(true);
+                            });
                         }
                     });
+
                     var setModelData = function (setPristine) {
                         var data = instance.getData();
                         if (data === '') {
