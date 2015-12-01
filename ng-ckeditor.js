@@ -134,7 +134,7 @@
                     ngModel.$render = function () {
                         data.push(ngModel.$viewValue);
                         if (isReady) {
-                            onUpdateModelData();
+                            onUpdateModelData(true);
                         }
                     };
                 };
