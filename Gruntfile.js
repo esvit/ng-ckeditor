@@ -51,6 +51,21 @@ module.exports = function (grunt) {
                 }
             }
         },
+        
+        buildcontrol: {
+            options: {
+                dir: 'dist',
+                commit: true,
+                push: true,
+                message: 'Built %sourceName% from commit %sourceCommit% on branch %sourceBranch%'
+            },
+            pages: {
+                options: {
+                    remote: 'git@github.com:esvit/ng-ckeditor.git',
+                    branch: 'gh-pages'
+                }
+            }
+        }
 
         // Make sure code styles are up to par and there are no obvious mistakes
         jshint: {
