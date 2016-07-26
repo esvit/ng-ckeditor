@@ -88,11 +88,12 @@
                         }
                     });
                     var setModelData = function (setPristine) {
-                        var data = instance.getData();
-                        if (data === '') {
-                            data = null;
-                        }
                         $timeout(function () { // for key up event
+                            var data = instance.getData();
+                            if (data === '') {
+                                data = null;
+                            }
+
                             if (setPristine !== true || data !== ngModel.$viewValue) {
                                 ngModel.$setViewValue(data);
                             }
@@ -100,7 +101,7 @@
                             if (setPristine === true && form) {
                                 form.$setPristine();
                             }
-                        }, 0);
+                        }, 5);
                     }, onUpdateModelData = function (setPristine) {
                         if (!data.length) {
                             return;
@@ -117,7 +118,7 @@
                     instance.on('pasteState',   setModelData);
                     instance.on('change', setModelData);
                     instance.on('blur', setModelData);
-                    //instance.on('key',          setModelData); // for source view
+                    instance.on('key',          setModelData); // for source view
 
                     instance.on('instanceReady', function () {
                         scope.$broadcast('ckeditor.ready');
