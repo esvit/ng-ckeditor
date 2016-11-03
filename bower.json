@@ -1,6 +1,6 @@
 {
   "name": "ng-ckeditor",
-  "version": "0.2.2",
+  "version": "0.2.3",
   "main": [
     "ng-ckeditor.js",
     "ng-ckeditor.css"
