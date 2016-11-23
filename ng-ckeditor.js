@@ -37,7 +37,10 @@
         return {
             restrict: 'AC',
             require: ['ngModel', '^?form'],
-            scope: false,
+            scope: {
+                ckeditor: '=',
+                ckPlugins: '=?'
+            },
             link: function (scope, element, attrs, ctrls) {
                 var ngModel = ctrls[0];
                 var form = ctrls[1] || null;
@@ -78,6 +81,15 @@
                         width: '100%'
                     };
                     options = angular.extend(options, scope[attrs.ckeditor]);
+
+                    // Manage the plugins on ckEditor
+                    if ((!angular.isUndefined(scope.ckPlugins)) && (scope.ckPlugins.length > 0)) {
+
+                        scope.ckPlugins.map(function (plugin) {
+                            var filename = plugin.filename || 'plugin.js';
+                            CKEDITOR.plugins.addExternal(plugin.name, plugin.path, filename);
+                        });
+                    }
 
                     var instance = (isTextarea) ? CKEDITOR.replace(element[0], options) : CKEDITOR.inline(element[0], options),
                         configLoaderDef = $q.defer();
