@@ -90,6 +90,10 @@
                     var setModelData = function (setPristine) {
                         var data = instance.getData();
 
+                        if(data === '' && ngModel.$modelValue === null) {
+                            data = null;
+                        }
+
                         $timeout(function () { // for key up event
                             if (setPristine !== true || data !== ngModel.$viewValue) {
                                 ngModel.$setViewValue(data);
