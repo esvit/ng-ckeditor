@@ -10,7 +10,7 @@ Code licensed under New BSD License.
 bower install ng-ckeditor
 ```
 
-##Usage
+## Usage
 ```html
 <textarea ckeditor="editorOptions" ng-model="modelName"></textarea>
 ```
